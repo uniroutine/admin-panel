@@ -1,10 +1,27 @@
+/* For Chrome, Safari, Edge */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: none;   /* hides scrollbar */
+}
+
+/* For IE/Edge (legacy) */
+html {
+  -ms-overflow-style: none;
+}
+
+
 /* App.css */
 .app-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  /* max-width: 1400px; */
+  margin-top: -17px;
+  padding: 1rem;
+  min-height: 86vh;
+  background: linear-gradient(0deg, #f9f6dc 0%, #e2f0ec 100%);
+  overflow: hidden; /* hides both horizontal and vertical scrollbars */
 }
 
 h1 {
@@ -23,9 +40,10 @@ h1 {
 }
 /* Navbar styling */
 .navbar {
-  background-color: #71a3e4;
+  background-color: #72bae4;
   padding: 0;
   margin-bottom: 20px;
+  
 }
 
 .navbar ul {
@@ -41,8 +59,9 @@ h1 {
 }
 
 .navbar a {
+  font-family:Arial, Helvetica, sans-serif;
   display: block;
-  color: white;
+  color: rgb(43, 85, 92);
   text-decoration: none;
   padding: 15px 20px;
   transition: background-color 0.3s;
@@ -50,5 +69,5 @@ h1 {
 
 .navbar a:hover,
 .navbar a.active {
-  background-color: #555;
+  background-color: #cfe2e2;
 }
