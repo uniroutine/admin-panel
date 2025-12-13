@@ -1,7 +1,7 @@
 // src/components/table.jsx
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import './table.css';
 
 //  Import libraries for DOCX generation and file saving
@@ -40,6 +40,9 @@ function RoutineTable({
   const [feedbackMessage, setFeedbackMessage] = useState(null);
 
 
+  // 🆕 New: editable schedule title
+  const [scheduleTitle, setScheduleTitle] = useState('Weekly Schedule');
+
   useEffect(() => {
     const loadSubjects = async () => {
       try {
@@ -68,16 +71,11 @@ function RoutineTable({
     try {
       const teachersRef = collection(db, 'subjects', subjectCode, 'teachers');
       const snapshot = await getDocs(teachersRef);
-
       const teachers = {};
       snapshot.forEach(doc => {
         teachers[doc.id] = doc.data().name;
       });
-
-      setTeachersCache(prev => ({
-        ...prev,
-        [subjectCode]: teachers
-      }));
+      setTeachersCache(prev => ({ ...prev, [subjectCode]: teachers }));
     } catch (err) {
       console.error(`Error loading teachers for ${subjectCode}:`, err);
     }
@@ -98,10 +96,8 @@ function RoutineTable({
           ? {
               ...row,
               subjects: row.subjects.map((cell, dIdx) =>
-                dIdx === dayIndex
-                  ? { subjectCode, teacherId: '' }
-                  : cell
-              )
+                dIdx === dayIndex ? { subjectCode, teacherId: '' } : cell
+              ),
             }
           : row
       )
@@ -150,15 +146,12 @@ function RoutineTable({
           ? {
               ...row,
               subjects: row.subjects.map((cell, dIdx) =>
-                dIdx === dayIndex
-                  ? { ...cell, teacherId }
-                  : cell
-              )
+                dIdx === dayIndex ? { ...cell, teacherId } : cell
+              ),
             }
           : row
       )
     );
-
     setActiveCell(null);
   };
 
@@ -177,10 +170,8 @@ function RoutineTable({
           ? {
               ...row,
               subjects: row.subjects.map((cell, dIdx) =>
-                dIdx === dayIndex
-                  ? { subjectCode: '', teacherId: '' }
-                  : cell
-              )
+                dIdx === dayIndex ? { subjectCode: '', teacherId: '' } : cell
+              ),
             }
           : row
       )
@@ -189,78 +180,84 @@ function RoutineTable({
     setFeedbackMessage(null);
   };
 
+  // 🆕 Updated: use editable title in DOCX generation
   const handleDownload = () => {
     const doc = new Document({
-      sections: [{
-        children: [
-          new Paragraph({
-            text: `Editable Weekly Schedule - Routine ${routineNumber}`,
-            heading: 'Heading1',
-            alignment: AlignmentType.CENTER,
-          }),
-          new Paragraph({}),
+      sections: [
+        {
+          children: [
+            new Paragraph({
+              text: scheduleTitle || 'Weekly Schedule',
+              heading: 'Heading1',
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({}), // Empty line
 
-          new Table({
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            borders: {
-              top: { style: BorderStyle.SINGLE, size: 1 },
-              bottom: { style: BorderStyle.SINGLE, size: 1 },
-              left: { style: BorderStyle.SINGLE, size: 1 },
-              right: { style: BorderStyle.SINGLE, size: 1 },
-            },
-            rows: [
-              new TableRow({
-                children: [
-                  new TableCell({ children: [new Paragraph('Day')] }),
-                  ...timeHeaders.map(time => new TableCell({ children: [new Paragraph(time)] })),
-                ],
-              }),
-              ...days.map((day, dayIndex) => new TableRow({
-                children: [
-                  new TableCell({ children: [new Paragraph(day)] }),
-                  ...schedule.map((row, timeIndex) => {
-                    if (row.isLunch) {
-                      return new TableCell({
-                        children: [new Paragraph(row.lunchText)],
-                        verticalAlign: VerticalAlign.CENTER,
-                      });
-                    }
-
-                    const cellData = row.subjects[dayIndex];
-                    const subjectCode = cellData.subjectCode;
-                    const teacherId = cellData.teacherId;
-                    const subject = subjectCode ? subjectsMap[subjectCode] : null;
-                    const subjectTeachers = subjectCode ? teachersCache[subjectCode] || {} : {};
-
-                    const cellText = subjectCode
-                      ? `[${subjectCode}] ${subject?.name || 'Unknown'}\n${teacherId ? (subjectTeachers[teacherId] || 'Teacher not found') : ''}`
-                      : 'No Subject';
-
-                    return new TableCell({
-                      children: [new Paragraph(cellText)],
-                      verticalAlign: VerticalAlign.CENTER,
-                    });
-                  }),
-                ],
-              })),
-            ],
-          }),
-        ],
-      }],
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              borders: {
+                top: { style: BorderStyle.SINGLE, size: 1 },
+                bottom: { style: BorderStyle.SINGLE, size: 1 },
+                left: { style: BorderStyle.SINGLE, size: 1 },
+                right: { style: BorderStyle.SINGLE, size: 1 },
+              },
+              rows: [
+                new TableRow({
+                  children: [
+                    new TableCell({ children: [new Paragraph('Day')] }),
+                    ...timeHeaders.map(time => new TableCell({ children: [new Paragraph(time)] })),
+                  ],
+                }),
+                ...days.map((day, dayIndex) =>
+                  new TableRow({
+                    children: [
+                      new TableCell({ children: [new Paragraph(day)] }),
+                      ...schedule.map((row, timeIndex) => {
+                        if (row.isLunch) {
+                          return new TableCell({
+                            children: [new Paragraph(row.lunchText)],
+                            verticalAlign: VerticalAlign.CENTER,
+                          });
+                        }
+                        const cellData = row.subjects[dayIndex];
+                        const subjectCode = cellData.subjectCode;
+                        const teacherId = cellData.teacherId;
+                        const subject = subjectCode ? subjectsMap[subjectCode] : null;
+                        const subjectTeachers = subjectCode ? teachersCache[subjectCode] || {} : {};
+                        const cellText = subjectCode
+                          ? `[${subjectCode}] ${subject?.name || 'Unknown'}\n${
+                              teacherId ? subjectTeachers[teacherId] || 'Teacher not found' : ''
+                            }`
+                          : 'No Subject';
+                        return new TableCell({
+                          children: [new Paragraph(cellText)],
+                          verticalAlign: VerticalAlign.CENTER,
+                        });
+                      }),
+                    ],
+                  })
+                ),
+              ],
+            }),
+          ],
+        },
+      ],
     });
 
-    Packer.toBlob(doc).then(blob => {
-      saveAs(blob, `weekly_schedule_routine_${routineNumber}.docx`);
-    }).catch(err => {
-      console.error('Error generating DOCX:', err);
-      alert('Failed to generate DOCX. Please try again.');
-    });
+    Packer.toBlob(doc)
+      .then(blob => {
+        saveAs(blob, `${scheduleTitle || 'weekly_schedule'}.docx`);
+      })
+      .catch(err => {
+        console.error('Error generating DOCX:', err);
+        alert('Failed to generate DOCX. Please try again.');
+      });
   };
 
   if (loadingSubjects) {
     return (
       <div className="table-container">
-        <h2 className="table-title">Editable Weekly Schedule</h2>
+        <h2 className="table-title">{scheduleTitle}</h2>
         <p className="loading">Loading subjects...</p>
       </div>
     );
@@ -269,7 +266,7 @@ function RoutineTable({
   if (error) {
     return (
       <div className="table-container">
-        <h2 className="table-title">Editable Weekly Schedule</h2>
+        <h2 className="table-title">{scheduleTitle}</h2>
         <div className="error-box">
           <p className="error-message">{error}</p>
           <button className="btn-retry" onClick={() => window.location.reload()}>
@@ -282,7 +279,16 @@ function RoutineTable({
 
   return (
     <div className="table-container">
-      <h2 className="table-title">Editable Weekly Schedule</h2>
+      {/* 🆕 Editable title input */}
+      <div className="title-edit-section">
+        <input
+          type="text"
+          value={scheduleTitle}
+          onChange={(e) => setScheduleTitle(e.target.value)}
+          className="title-input"
+          placeholder="Enter routine title (e.g. 1st Sem Schedule)"
+        />
+      </div>
       
       {/* Show feedback message (Error/Warning when selecting teacher) */}
       {feedbackMessage && (
@@ -315,7 +321,6 @@ function RoutineTable({
                       </td>
                     );
                   }
-
                   const cellData = row.subjects[dayIndex];
                   const subjectCode = cellData.subjectCode;
                   const teacherId = cellData.teacherId;
@@ -350,7 +355,9 @@ function RoutineTable({
                           {subjectCode && Object.keys(subjectTeachers).length > 0 && (
                             <select
                               value={teacherId}
-                              onChange={(e) => handleTeacherSelect(dayIndex, timeIndex, e.target.value)}
+                              onChange={(e) =>
+                                handleTeacherSelect(dayIndex, timeIndex, e.target.value)
+                              }
                               className="teacher-select"
                             >
                               <option value="">-- Select Teacher --</option>
@@ -411,10 +418,8 @@ function RoutineTable({
         </table>
       </div>
 
-      <button
-        onClick={handleDownload}
-        className="btn-download"
-      >
+      {/* Download button */}
+      <button onClick={handleDownload} className="btn-download">
         Download as DOCX
       </button>
     </div>

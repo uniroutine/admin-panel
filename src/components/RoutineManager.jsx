@@ -112,9 +112,7 @@ function RoutineManager() {
       <h1>Routine Manager</h1>
       <p>Use the tables below to add, view, edit, and delete routines.</p>
 
-      <button className="add-routine-btn" onClick={handleAddRoutine}>
-        Add New Routine
-      </button>
+      
 
       {routines.map((id, index) => (
         <div className="routine-block" key={id}>
@@ -137,6 +135,9 @@ function RoutineManager() {
           />
         </div>
       ))}
+      <button className="add-routine-btn" onClick={handleAddRoutine}>
+        Add New Routine
+      </button>
     </div>
   );
 }
