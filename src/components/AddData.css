@@ -1,0 +1,89 @@
+/* AddData.css — responsive 3-column layout collapsed to single column on mobile */
+.add-data-root {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 12px;
+  font-family: Inter, Arial, sans-serif;
+  color: #111;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: 1.5rem;
+}
+
+/* grid: 3 columns on wide screens, single column under 900px */
+.grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+}
+
+/* wide screen: 3 columns side-by-side */
+@media (min-width: 900px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e6e9ee;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(27,31,35,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.05rem;
+}
+
+/* form layout */
+.form-stack { display:flex; flex-direction:column; gap:8px; }
+label { font-weight:600; font-size:0.9rem; color:#333; }
+input, select {
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid #d6dbe3;
+  font-size:0.95rem;
+  width:100%;
+  box-sizing:border-box;
+}
+input:focus, select:focus { outline: none; border-color: #4c9aff; box-shadow: 0 0 0 4px rgba(76,154,255,0.08); }
+
+button {
+  padding:10px 14px;
+  background: linear-gradient(180deg,#0b74ff,#0666d6);
+  color:#fff;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  width: fit-content;
+}
+button:disabled { opacity:0.6; cursor:not-allowed; }
+
+/* import area */
+.import-section input[type="file"] { padding:6px 8px; }
+.import-actions { display:flex; gap:8px; margin-top:6px; }
+.hint { font-size:0.85rem; color:#555; margin-top:6px; }
+
+/* small notes & status */
+.note { font-size:0.85rem; color:#666; margin-top:8px; }
+.status-bar {
+  margin-top:14px;
+  min-height:28px;
+  font-weight:600;
+  color:#0b3a66;
+  text-align:center;
+}
+
+/* mobile tweaks */
+@media (max-width:420px) {
+  .page-title { font-size:1.25rem; }
+  input, select { font-size:0.95rem; padding:9px; }
+  button { padding:9px 12px; font-size:0.95rem; }
+}

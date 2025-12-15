@@ -5,9 +5,9 @@ import "./App.css";
 
 // Your existing page components
 import Home from "./components/home";
-import Form from "./components/form";
 import RoutineManager from "./components/RoutineManager";
 import AboutUs from "./components/AboutUs";
+import AddData from "./components/AddData";
 
 // Auth pieces (ensure these files exist)
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -52,8 +52,8 @@ function AppRoutes() {
 
     {/* Protected routes (RequireAuth uses in-memory location) */}
     <Route element={<RequireAuth />}>
+    <Route path="/add-data" element={<AddData />} />
     <Route path="/" element={<Home />} />
-    <Route path="/form" element={<Form />} />
     <Route path="/table" element={<RoutineManager />} />
     <Route path="/about" element={<AboutUs />} />
     </Route>
@@ -71,7 +71,7 @@ function MainNav({ onSignOut }) {
     <nav className="navbar" aria-label="Primary navigation">
     <ul>
     <li><Link to="/">Home</Link></li>
-    <li><Link to="/form">Add Subject</Link></li>
+    <li><Link to="/add-data">Add Data</Link></li>
     <li><Link to="/table">View Routine</Link></li>
     <li><Link to="/about">About Us</Link></li>
     <li style={{ marginLeft: 12 }}>
