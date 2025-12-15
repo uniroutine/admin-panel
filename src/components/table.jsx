@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { db } from '../firebase';
 import { collection, getDocs, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import './table.css';
+import './table.layout.css';
+import './table.feedback.css';
 
 // Import libraries for DOCX generation and file saving
 import { Packer, Document, Table, TableRow, TableCell, Paragraph, WidthType, BorderStyle, AlignmentType, VerticalAlign } from 'docx';
@@ -60,6 +61,7 @@ function RoutineTable({
   const [teachersCache, setTeachersCache] = useState({});
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [checkingConflict, setCheckingConflict] = useState(false);
 
   const [editData, setEditData] = useState({
     subjectCode: '',
@@ -78,6 +80,58 @@ function RoutineTable({
   const selectedOption = selectedRoutine 
     ? routineOptions.find(opt => opt.value === selectedRoutine.id) 
     : null;
+
+  // NEW: Check teacher conflict by fetching from database
+  const checkTeacherConflictInDatabase = async (teacherId, day, period, currentRoutineId) => {
+    if (!teacherId) return null;
+    
+    setCheckingConflict(true);
+    
+    try {
+      const dayKey = dayToKey[day];
+      if (!dayKey) return null;
+      
+      // Fetch all routines
+      const routinesSnapshot = await getDocs(collection(db, 'routines'));
+      
+      // Loop through each routine
+      for (const routineDoc of routinesSnapshot.docs) {
+        const routineId = routineDoc.id;
+        
+        // Skip current routine
+        if (routineId === currentRoutineId) continue;
+        
+        const routineName = routineDoc.data().name || routineId;
+        
+        // Fetch the specific day collection for this routine
+        const dayCollectionRef = collection(db, 'routines', routineId, dayKey);
+        const daySnapshot = await getDocs(dayCollectionRef);
+        
+        // Check if the period exists
+        const periodDoc = daySnapshot.docs.find(doc => doc.id === String(period));
+        
+        if (periodDoc) {
+          const periodData = periodDoc.data();
+          
+          // Check if same teacher is assigned
+          if (periodData.teacherId === teacherId) {
+            return {
+              routineId: routineId,
+              routineName: routineName
+            };
+          }
+        }
+      }
+      
+      return null;
+      
+    } catch (err) {
+      console.error('Error checking conflict:', err);
+      return null;
+    } finally {
+      setCheckingConflict(false);
+    }
+  };
 
   // Fetch all routines from Firestore
   useEffect(() => {
@@ -261,21 +315,24 @@ function RoutineTable({
     }
   };
 
-  const handleTeacherSelect = (teacherId) => {
+  const handleTeacherSelect = async (teacherId) => {
     const teacherName = teacherId && editData.subjectCode 
       ? teachersCache[editData.subjectCode]?.[teacherId] || '' 
       : '';
 
-    if (teacherId && activeCell) {
-      const timeSlot = timeSlots.find(s => s.period === activeCell.period)?.time;
-      const dayIndex = days.indexOf(activeCell.day);
+    if (teacherId && activeCell && selectedRoutine) {
+      // NEW: Check conflict by fetching from database
+      const conflict = await checkTeacherConflictInDatabase(
+        teacherId, 
+        activeCell.day, 
+        activeCell.period, 
+        selectedRoutine.id
+      );
       
-      if (!isTeacherAvailable(selectedRoutine?.id, dayIndex, timeSlot, teacherId)) {
-        const conflictingRoutineNumber = getConflictingRoutine(selectedRoutine?.id, dayIndex, timeSlot, teacherId);
-        
+      if (conflict) {
         setFeedbackMessage({
           type: 'error',
-          message: `Cannot assign ${teacherName}. Already scheduled in Routine ${conflictingRoutineNumber}.`
+          message: `Cannot assign ${teacherName}. Already scheduled in ${conflict.routineName}.`
         });
         return;
       }
@@ -305,6 +362,24 @@ function RoutineTable({
     if (!dayKey) {
       setFeedbackMessage({ type: 'error', message: 'Invalid day selected.' });
       return;
+    }
+
+    //  Final conflict check before saving
+    if (editData.teacherId) {
+      const conflict = await checkTeacherConflictInDatabase(
+        editData.teacherId,
+        day,
+        period,
+        selectedRoutine.id
+      );
+      
+      if (conflict) {
+        setFeedbackMessage({
+          type: 'error',
+          message: `Cannot save. ${editData.teacherName} is already scheduled in ${conflict.routineName}.`
+        });
+        return;
+      }
     }
 
     setSaving(true);
@@ -523,12 +598,6 @@ function RoutineTable({
         />
       </div>
 
-      {feedbackMessage && (
-        <div className={`feedback-message ${feedbackMessage.type === 'error' ? 'feedback-error' : 'feedback-success'}`}>
-          {feedbackMessage.message}
-        </div>
-      )}
-
       {loadingSchedule && (
         <div className="loading-box">Loading schedule...</div>
       )}
@@ -585,7 +654,7 @@ function RoutineTable({
                                 value={editData.subjectCode}
                                 onChange={(e) => handleSubjectSelect(e.target.value)}
                                 className="edit-select"
-                                disabled={saving}
+                                disabled={saving || checkingConflict}
                               >
                                 <option value="">-- Select Subject --</option>
                                 {Object.entries(subjectsMap).map(([code, data]) => (
@@ -600,24 +669,14 @@ function RoutineTable({
                                   value={editData.teacherId}
                                   onChange={(e) => handleTeacherSelect(e.target.value)}
                                   className="edit-select"
-                                  disabled={saving}
+                                  disabled={saving || checkingConflict}
                                 >
                                   <option value="">-- Select Teacher --</option>
-                                  {Object.entries(teachersCache[editData.subjectCode] || {}).map(([id, name]) => {
-                                    const timeSlot = timeSlots.find(s => s.period === slot.period)?.time;
-                                    const isUnavailable = !isTeacherAvailable(selectedRoutine?.id, dayIndex, timeSlot, id);
-                                    const conflictRoutine = isUnavailable ? getConflictingRoutine(selectedRoutine?.id, dayIndex, timeSlot, id) : null;
-                                    
-                                    return (
-                                      <option 
-                                        key={id} 
-                                        value={id}
-                                        className={isUnavailable ? 'teacher-unavailable' : ''}
-                                      >
-                                        {name} {isUnavailable ? `(Routine ${conflictRoutine})` : ''}
-                                      </option>
-                                    );
-                                  })}
+                                  {Object.entries(teachersCache[editData.subjectCode] || {}).map(([id, name]) => (
+                                    <option key={id} value={id}>
+                                      {name}
+                                    </option>
+                                  ))}
                                 </select>
                               )}
 
@@ -628,7 +687,7 @@ function RoutineTable({
                                   onChange={(e) => handleRoomChange(e.target.value)}
                                   placeholder="Room"
                                   className="edit-input"
-                                  disabled={saving}
+                                  disabled={saving || checkingConflict}
                                 />
                               )}
 
@@ -636,21 +695,21 @@ function RoutineTable({
                                 <button 
                                   onClick={saveCell} 
                                   className="btn-save"
-                                  disabled={saving}
+                                  disabled={saving || checkingConflict}
                                 >
                                   {saving ? 'Saving...' : 'Save'}
                                 </button>
                                 <button 
                                   onClick={clearCell} 
                                   className="btn-clear"
-                                  disabled={saving}
+                                  disabled={saving || checkingConflict}
                                 >
                                   Clear
                                 </button>
                                 <button 
                                   onClick={cancelEdit} 
                                   className="btn-cancel"
-                                  disabled={saving}
+                                  disabled={saving || checkingConflict}
                                 >
                                   Cancel
                                 </button>
@@ -690,9 +749,31 @@ function RoutineTable({
             </table>
           </div>
 
-          <button onClick={handleDownload} className="btn-download">
-            Download as DOCX
-          </button>
+          <div className="table-footer">
+            {(checkingConflict || feedbackMessage) && (
+              <div className="table-notification">
+                {checkingConflict && !feedbackMessage && (
+                  <div className="loading-box">
+                    <span className="loading-spinner"></span>
+                    Checking teacher availability…
+                  </div>
+                )}
+
+                {feedbackMessage && (
+                  <div className={feedbackMessage.type === 'error' ? 'feedback-error' : 'feedback-success'}>
+                    {feedbackMessage.message}
+                  </div>
+                )}
+              </div>
+            )}
+
+  <button onClick={handleDownload} className="btn-download">
+    Download as DOCX
+  </button>
+
+</div>
+
+
 
           <div className="info-footer">
             <p>Changes are saved to the database automatically.</p>
