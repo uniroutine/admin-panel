@@ -1,0 +1,120 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap");
+
+/* Force background on document root ONLY while login page is mounted */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body.login-body {
+  background: #dff0ff;
+  min-height: 100vh;
+}
+
+/* Login page container */
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #dff0ff;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Brand text */
+.login-brand {
+  text-align: center;
+  margin-bottom: 1.75rem;
+  transform: translateY(-20px);
+}
+
+.login-brand-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #0f172a;
+  opacity: 0;
+  animation: fadeIn 3.5s ease forwards;
+  animation-delay: 0.8s;
+}
+
+.login-brand-subtitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #475569;
+  opacity: 0;
+  animation: fadeIn 3.5s ease forwards;
+  animation-delay: 1.8s;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Card */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+/* Form */
+.login-title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  color: #0f172a;
+}
+
+.login-form {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.login-label {
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.login-input {
+  height: 42px;
+  padding: 0 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e6eef8;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+/* Button */
+.login-button {
+  margin: 1rem auto 0;
+  width: 100%;
+  max-width: 320px;
+  height: 46px;
+  border-radius: 12px;
+  border: 0.5px solid #9ca3af;
+  background: #dff0ff;
+  font-weight: 600;
+  cursor: pointer;
+  color: #000;
+}
+
+.login-button:hover {
+  background: #cfe8ff;
+}
+
+.login-error {
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
