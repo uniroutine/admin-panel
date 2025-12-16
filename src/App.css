@@ -1,33 +1,17 @@
-/* src/App.css */
+/* src/App.css
+   App-level layout, navbar, mobile menu, and component visuals.
+   NOTE: Removed background override so index.css controls the page background.
+*/
 
 /* ===== hide scrollbars across browsers ===== */
-/* For Chrome, Safari, Edge */
-::-webkit-scrollbar {
-  display: none;
-}
-
-/* For Firefox */
-html {
-  scrollbar-width: none;
-}
-
-/* For IE/Edge (legacy) */
-html {
-  -ms-overflow-style: none;
-}
-
-/* ===== GLOBAL BACKGROUND ===== */
-html,
-body,
-#root {
-  background-color: #ffffff;
-}
+::-webkit-scrollbar { display: none; }
+html { scrollbar-width: none; -ms-overflow-style: none; }
 
 /* ===== App container ===== */
 .app-container {
   margin-top: 0;
   min-height: 86vh;
-  background-color: #ffffff;
+  /* background-color removed to preserve index.css theme */
 }
 
 /* Headline styling */
@@ -39,7 +23,7 @@ h1 {
   font-size: 2.5rem;
 }
 
-/* Routines table shadow */
+/* Routine table visual treatment (kept in App.css as component-level visual) */
 .routine-table {
   margin-top: 2rem;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -61,8 +45,6 @@ h1 {
   border-bottom: 1px solid rgba(10, 40, 80, 0.06);
 }
 
-/* Grid layout: left spacer | centered links | right signout */
-
 .nav-center {
   max-width: 1200px;
   margin: 0 auto;
@@ -81,15 +63,34 @@ h1 {
   align-items: center;
 }
 
-/* Right aligned signout */
+/* BRAND TEXT */
+.nav-left::before {
+  content: "Uniroutine";
+  position: absolute;
+  left: 1.25rem;          /* desktop */
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 800;
+  font-size: 1.45rem;
+  letter-spacing: 0.4px;
+  color: #0b3a66;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1150;
+}
+
 .nav-right {
   padding: 1rem;
   justify-self: end;
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
-/* Nav links list */
+/* ===========================
+   NAV LINKS
+   =========================== */
+
 .nav-links {
   display: flex;
   gap: 12px;
@@ -98,7 +99,6 @@ h1 {
   list-style: none;
 }
 
-/* Nav links */
 .nav-links li a {
   display: inline-block;
   padding: 10px 14px;
@@ -109,7 +109,6 @@ h1 {
   transition: transform 180ms ease, background-color 180ms ease;
 }
 
-/* Hover animation */
 .nav-links li a:hover,
 .nav-links li a:focus {
   transform: translateY(-4px);
@@ -118,12 +117,10 @@ h1 {
   outline: none;
 }
 
-/* Active link */
-.nav-links li a.active {
-  background: rgba(11, 58, 102, 0.1);
-}
+/* ===========================
+   SIGN OUT BUTTON
+   =========================== */
 
-/* Sign out button */
 .signout-btn {
   background: linear-gradient(180deg, #ffecec 0%, #ffdede 100%);
   color: #8b0000;
@@ -136,7 +133,6 @@ h1 {
   box-shadow: 0 4px 12px rgba(219, 68, 68, 0.06);
 }
 
-/* Signout hover */
 .signout-btn:hover,
 .signout-btn:focus {
   background: linear-gradient(180deg, #ff6b6b 0%, #ff4d4d 100%);
@@ -146,26 +142,140 @@ h1 {
   outline: none;
 }
 
-/* ===== Mobile ===== */
-@media (max-width: 720px) {
-  .nav-inner {
-    grid-template-columns: 1fr auto;
-    row-gap: 6px;
+/* ===========================
+   HAMBURGER
+   =========================== */
+
+.hamburger-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.hamburger-btn,
+.hamburger-btn:hover,
+.hamburger-btn:focus,
+.hamburger-btn:active {
+  background: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.hamburger-bar {
+  width: 26px;
+  height: 3px;
+  background-color: #000000;
+  border-radius: 0;
+  transform-origin: center;
+  transition: transform 240ms cubic-bezier(.4,0,.2,1);
+}
+
+.hamburger-btn.open .hamburger-bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg) scaleX(1.08);
+}
+.hamburger-btn.open .hamburger-bar:nth-child(2) {
+  transform: scaleX(0);
+}
+.hamburger-btn.open .hamburger-bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg) scaleX(1.08);
+}
+
+/* ===========================
+   MOBILE DROPDOWN MENU
+   =========================== */
+
+.mobile-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 16px;
+  width: 180px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.mobile-menu.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.mobile-menu a,
+.mobile-menu button {
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  color: #0b3a66;
+  background: none;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.mobile-menu a:hover {
+  background: rgba(11, 58, 102, 0.08);
+}
+
+.mobile-menu .signout-btn {
+  background: linear-gradient(180deg, #ffecec 0%, #ffdede 100%);
+  color: #8b0000;
+  box-shadow: 0 4px 12px rgba(219, 68, 68, 0.06);
+}
+
+.mobile-menu .signout-btn:hover,
+.mobile-menu .signout-btn:focus {
+  background: linear-gradient(180deg, #ff6b6b 0%, #ff4d4d 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(255,77,77,0.18);
+}
+
+/* ===========================
+   MOBILE VISIBILITY HELPERS
+   =========================== */
+
+.showOnMobile { display: none; }
+.hideOnMobile { display: block; }
+
+@media (max-width: 770px) {
+  .showOnMobile { display: inline-flex; }
+  .hideOnMobile { display: none; }
+
+  /* re-enable brand container on mobile */
+  .nav-left {
+    display: block;
   }
 
-  .nav-center {
-    grid-column: 1 / -1;
-    justify-content: center;
+  /* center brand on mobile */
+  .nav-left::before {
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
-  .nav-links {
-    flex-wrap: wrap;
-    justify-content: center;
+  .nav-right {
+    position: relative;
   }
 }
 
 /* ===========================
-   AUTH LOADING SCREEN
+   AUTH LOADING + FADE
    =========================== */
 
 .auth-loading-page {
@@ -190,13 +300,6 @@ h1 {
   min-width: 260px;
 }
 
-.auth-loading-text {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #0b3a66;
-}
-
-/* Simple spinner (throbber) */
 .spinner {
   width: 36px;
   height: 36px;
@@ -206,44 +309,13 @@ h1 {
   animation: spin 0.9s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ===========================
-   FADE-IN TRANSITIONS
-   =========================== */
-
-/* App content fade-in after auth */
 .app-fade-in {
   animation: appFadeIn 320ms ease-out both;
 }
 
 @keyframes appFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Loading box fade-in */
-.auth-loading-box {
-  animation: loadingFadeIn 260ms ease-out both;
-}
-
-@keyframes loadingFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

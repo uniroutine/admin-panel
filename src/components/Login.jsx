@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -13,18 +13,6 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-
-  useEffect(() => {
-    document.documentElement.classList.add("login-mode");
-    document.body.classList.add("login-mode");
-    document.getElementById("root")?.classList.add("login-mode");
-
-    return () => {
-      document.documentElement.classList.remove("login-mode");
-      document.body.classList.remove("login-mode");
-      document.getElementById("root")?.classList.remove("login-mode");
-    };
-  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();

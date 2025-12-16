@@ -1,3 +1,8 @@
+/* src/index.css
+   Global tokens, resets, color variables, and base element styles.
+   Kept as the authoritative source for fonts, color tokens, and page background.
+*/
+
 html,
 body,
 #root {
@@ -15,14 +20,17 @@ body,
   line-height: 1.6;
   font-weight: 400;
 
-  /* Modern color scheme */
+  /* Modern color scheme / tokens */
   --primary: #3b82f6;
   --secondary: #8b5cf6;
   --background: #f8fafc;
   --card-bg: rgba(255, 255, 255, 0.9);
   --text: #1e293b;
   --border: rgba(0, 0, 0, 0.1);
+}
 
+/* Page background (keeps the app's visual theme) */
+html {
   color: var(--text);
   background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
 }
@@ -34,6 +42,7 @@ body {
     radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
     radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 20%),
     var(--background);
+  /* keep other layout-related backgrounds in App.css (navbar) */
 }
 
 /* ---------- TABLE / CARD STYLES ---------- */
@@ -56,7 +65,7 @@ body {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* ---------- BUTTONS ---------- */
+/* ---------- BUTTONS (base) ---------- */
 
 button {
   border-radius: 12px;
@@ -81,7 +90,9 @@ button:focus {
   outline: 3px solid rgba(59, 130, 246, 0.4);
 }
 
-/* ---------- TABLE ---------- */
+/* ---------- TABLE (structure & color tokens) ----------
+   Visual margins & shadows live in App.css for component-level control.
+*/
 
 .routine-table {
   border-collapse: separate;
@@ -122,4 +133,11 @@ button:focus {
   .table-title {
     font-size: 1.5rem;
   }
+}
+
+/* Prevent accidental horizontal overflow app-wide */
+html,
+body,
+#root {
+  overflow-x: hidden;
 }
