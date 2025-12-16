@@ -101,26 +101,20 @@ function AppRoutes() {
 function MainNav({ onSignOut }) {
   return (
     <nav className="navbar" aria-label="Primary navigation">
-    <div className="nav-inner">
-    <div className="nav-left">
-    <ul className="nav-links">
-    <li><Link to="/">Home</Link></li>
-    <li><Link to="/add-data">Add Data</Link></li>
-    <li><Link to="/edit-routine">Edit Routine</Link></li>
-    <li><Link to="/about-us">About Us</Link></li>
-    </ul>
-    </div>
-
-    {/* centered signout button (visually centered across screen) */}
-    <div className="nav-center">
-    <button className="signout-btn" onClick={onSignOut} aria-label="Sign out">
-    Sign out
-    </button>
-    </div>
-
-    {/* right placeholder (keeps layout symmetrical and prevents overlaps) */}
-    <div className="nav-right" aria-hidden="true" />
-    </div>
+      <div className="nav-left"></div>
+      <div className="nav-center">
+        <ul className="nav-links">
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/add-data">Add Data</Link></li>
+          <li><Link to="/edit-routine">Edit Routine</Link></li>
+          <li><Link to="/about-us">About Us</Link></li>
+        </ul>
+      </div>
+      <div className="nav-right">
+        <button className="signout-btn" onClick={onSignOut} aria-label="Sign out">
+          Sign out
+        </button>
+      </div>
     </nav>
   );
 }

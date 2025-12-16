@@ -50,6 +50,8 @@ h1 {
    =========================== */
 
 .navbar {
+  display: flex;
+  justify-content: center;
   position: sticky;
   top: 0;
   z-index: 1100;
@@ -60,7 +62,8 @@ h1 {
 }
 
 /* Grid layout: left spacer | centered links | right signout */
-.nav-inner {
+
+.nav-center {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
@@ -70,15 +73,17 @@ h1 {
   min-height: 56px;
 }
 
-/* Center nav links */
-.nav-center {
-  justify-self: center;
+.nav-left {
+  padding: 1rem;
+  padding-right: 6.773rem;
+  justify-self: end;
   display: flex;
   align-items: center;
 }
 
 /* Right aligned signout */
 .nav-right {
+  padding: 1rem;
   justify-self: end;
   display: flex;
   align-items: center;

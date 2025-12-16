@@ -55,8 +55,8 @@ input:focus, select:focus { outline: none; border-color: #4c9aff; box-shadow: 0 
 
 button {
   padding:10px 14px;
-  background: linear-gradient(180deg,#0b74ff,#0666d6);
-  color:#fff;
+  background: #aedcf3;
+  color:#003957;
   border:0;
   border-radius:8px;
   cursor:pointer;

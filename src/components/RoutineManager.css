@@ -15,19 +15,14 @@
 }
 
 .add-routine-btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.add-routine-btn:hover {
-  background-color: #45a049;
+  padding:10px 14px;
+  background: #aedcf3;
+  color:#003957;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  width: fit-content;
 }
 
 .routine-block {
@@ -46,16 +41,21 @@
 }
 
 .btn-delete-routine {
-  background-color: #e53935;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
+  background: linear-gradient(180deg, #ffecec 0%, #ffdede 100%);
+  color: #8b0000;
+  border: 1px solid rgba(139,0,0,0.12);
+  padding: 8px 14px;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease-in-out;
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 4px 12px rgba(219, 68, 68, 0.06);
 }
 
-.btn-delete-routine:hover {
-  background-color: #b71c1c;
+.btn-delete-routine:hover,
+.btn-delete-routine:focus {
+  background: linear-gradient(180deg, #ff6b6b 0%, #ff4d4d 100%);
+  color: #ffffff;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(255,77,77,0.18);
+  outline: none;
 }

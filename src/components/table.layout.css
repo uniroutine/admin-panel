@@ -268,19 +268,15 @@
  *   Download
  *   ========================= */
 
-.btn-download {
-  margin-top: 8px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 8px;
-  background: #38bdf8;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-download:hover {
-  background: #0ea5e9;
+.download-btn {
+  padding:10px 14px;
+  background: #aedcf3;
+  color:#003957;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  width: fit-content;
 }
 
 /* =========================

@@ -345,7 +345,7 @@ export default function AddData() {
         <form onSubmit={handleRoutineCreate} className="form-stack">
         <label>New Routine ID</label>
         <input value={routineId} onChange={e => setRoutineId(e.target.value)} placeholder="e.g. IT1" />
-        <button type="submit" disabled={saving}>Create Routine</button>
+        <button type="submit" disabled={saving}>Add Routine ID</button>
         </form>
 
         <hr />
@@ -353,7 +353,7 @@ export default function AddData() {
         <form onSubmit={handleRoutineSetName} className="form-stack">
         <label>Choose Routine</label>
         <select value={selectedRoutineId} onChange={e => setSelectedRoutineId(e.target.value)} disabled={loadingRoutines}>
-        <option value="">-- choose existing routine --</option>
+        <option value="">-- choose existing routine id--</option>
         {routineList.map(r => <option key={r.id} value={r.id}>{r.id}{r.name ? ` — ${r.name}` : ""}</option>)}
         </select>
 
