@@ -14,6 +14,7 @@ import RoutineManager from "./components/RoutineManager";
 import FacultyRoutine from "./components/FacultyRoutine";
 import AboutUs from "./components/AboutUs";
 import AddData from "./components/AddData";
+import Parameters from "./components/Parameters";
 
 // Auth
 import { useAuth } from "./contexts/AuthContext";
@@ -77,6 +78,7 @@ function AppRoutes() {
             <Route element={<RequireAuth />}>
               <Route path="/" element={<Home />} />
               <Route path="/add-data" element={<AddData />} />
+              <Route path="/parameters" element={<Parameters />} />
               <Route path="/edit-routine" element={<RoutineManager />} />
               <Route path="/faculty-routine" element={<FacultyRoutine />} />
               <Route path="/about-us" element={<AboutUs />} />
@@ -112,6 +114,9 @@ function MainNav({ onSignOut }) {
           </li>
           <li className="hideOnMobile">
             <Link to="/add-data">Add Data</Link>
+          </li>
+          <li className="hideOnMobile">
+          <Link to="/parameters">Parameters</Link>
           </li>
           <li className="hideOnMobile">
             <Link to="/edit-routine">Student Routine</Link>
@@ -152,8 +157,11 @@ function MainNav({ onSignOut }) {
           <Link to="/add-data" onClick={closeMenu}>
             Add Data
           </Link>
+          <Link to="/parameters" onClick={closeMenu}>
+          Parameters
+          </Link>
           <Link to="/edit-routine" onClick={closeMenu}>
-            Edit Routine
+            Student Routine
           </Link>
           <Link to="/faculty-routine" onClick={closeMenu}>
             Faculty Routine
